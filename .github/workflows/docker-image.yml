@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-latest  # This runs the job on an Ubuntu runner
+    runs-on: ubuntu-latest  # Runs the job on an Ubuntu runner
 
     steps:
     # Step 1: Checkout the code from the repository
@@ -20,17 +20,16 @@ jobs:
         IMAGE_TAG="samcrit-client-app:$(date +%s)"  # Use a timestamp tag for uniqueness
         docker build . --file Dockerfile --tag $IMAGE_TAG
 
-    # Step 3: Run the Docker container in the background
+    # Step 3: Run the Docker container from the locally built image
     - name: Run Docker container locally
       run: |
         IMAGE_TAG="samcrit-client-app:$(date +%s)"
         docker run -d -p 3000:3000 $IMAGE_TAG
 
-    # Step 4: Wait for the container to fully start
+    # Step 4: Wait for the container to fully start (Adjust timing if necessary)
     - name: Wait for the Docker container to be up
       run: |
-        # Wait for the container to be up and running, assuming the app starts on port 3000
-        sleep 10  # Adjust the sleep duration if your app takes longer to start
+        sleep 10  # Allow the app to start (adjust if necessary)
 
     # Step 5: Verify the app is running using curl
     - name: Test the Docker container

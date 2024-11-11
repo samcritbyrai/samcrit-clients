@@ -24,7 +24,7 @@ jobs:
     - name: Run Docker container locally
       run: |
         IMAGE_TAG="samcrit-client-app"
-        docker run -d -p 3000:3000 $IMAGE_TAG
+        docker run -d -p 8080:8080 $IMAGE_TAG
 
     # Step 4: Wait for the container to fully start (Adjust timing if necessary)
     - name: Wait for the Docker container to be up

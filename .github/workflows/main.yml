@@ -15,13 +15,13 @@ jobs:
     steps:
       # Check out the code from the repository
       - name: Checkout code
-        uses: actions/checkout@v3  # Updated to v3
+        uses: actions/checkout@v3  # Latest version
 
       # Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v4  # Updated to v4
+        uses: actions/setup-node@v4  # Latest version
         with:
-          node-version: '16' 
+          node-version: '16'  # Explicitly set to Node.js 16
 
       # Install dependencies
       - name: Install dependencies

@@ -15,20 +15,24 @@ jobs:
     # Step 1: Checkout the code
     - uses: actions/checkout@v4
 
-    # Step 2: Set up Node.js for the CI process (optional, only if you need Node.js for tasks before building Docker)
+    # Step 2: Set up Node.js (if needed for the build process)
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'  # Ensure Node.js 20 is used in the workflow
 
-    # Step 3: Install dependencies (optional, if you want to test before Docker build)
+    # Step 3: Install dependencies (optional if testing locally before Docker)
     - name: Install dependencies
       run: npm install
 
     # Step 4: Build the Docker image with Node.js
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag samcrit-client-app:$(date +%s)
+      run: |
+        IMAGE_TAG="samcrit-client-app:$(date +%s)"
+        docker build . --file Dockerfile --tag $IMAGE_TAG
 
-    # Optional Step: If you want to run the container after building it
-    - name: Run Docker container 
-      run: docker run -d -p 3000:3000 samcrit-client-app:$(date +%s)
+    # Step 5: Run the Docker image (with the correct tag)
+    - name: Run Docker container
+      run: |
+        IMAGE_TAG="samcrit-client-app:$(date +%s)"
+        docker run -d -p 3000:3000 $IMAGE_TAG

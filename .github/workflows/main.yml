@@ -42,7 +42,7 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: docker build -t my-node-app .
+        run: docker build -t samcrit-client-app .
 
       # Run Docker container to verify it works
       - name: Run Docker container

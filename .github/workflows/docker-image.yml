@@ -17,7 +17,7 @@ jobs:
     # Step 2: Build the Docker image from the Dockerfile
     - name: Build Docker image
       run: |
-        IMAGE_TAG="samcrit-client-app"  # Use a timestamp tag for uniqueness
+        IMAGE_TAG="samcrit-client-app"  # Use a tag name for uniqueness
         docker build . --file Dockerfile --tag $IMAGE_TAG
 
     # Step 3: Run the Docker container from the locally built image
@@ -31,3 +31,9 @@ jobs:
       run: |
         sleep 10  # Allow the app to start (adjust if necessary)
 
+    # Step 5: Deploy to Azure App Service
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: "samcrit-clients"  # The name of your Azure App Service
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # GitHub secret storing the publish profile

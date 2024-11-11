@@ -35,5 +35,5 @@ jobs:
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
       with:
-        app-name: "samcrit-clients"  # The name of your Azure App Service
+        app-name: "sam-clients"  # The name of your Azure App Service
         publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # GitHub secret storing the publish profile

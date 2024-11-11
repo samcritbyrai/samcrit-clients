@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI with Local Testing
 
 on:
   push:
@@ -7,12 +7,39 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
+  build_and_test:
+    runs-on: ubuntu-latest  # This runs the job on an Ubuntu runner
 
     steps:
+    # Step 1: Checkout the code from the repository
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag samcrit-client-app:$(date +%s)
+
+    # Step 2: Build the Docker image from the Dockerfile
+    - name: Build Docker image
+      run: |
+        IMAGE_TAG="samcrit-client-app:$(date +%s)"  # Use a timestamp tag for uniqueness
+        docker build . --file Dockerfile --tag $IMAGE_TAG
+
+    # Step 3: Run the Docker container in the background
+    - name: Run Docker container locally
+      run: |
+        IMAGE_TAG="samcrit-client-app:$(date +%s)"
+        docker run -d -p 3000:3000 $IMAGE_TAG
+
+    # Step 4: Wait for the container to fully start
+    - name: Wait for the Docker container to be up
+      run: |
+        # Wait for the container to be up and running, assuming the app starts on port 3000
+        sleep 10  # Adjust the sleep duration if your app takes longer to start
+
+    # Step 5: Verify the app is running using curl
+    - name: Test the Docker container
+      run: |
+        curl --silent --fail http://localhost:3000 || exit 1  # Make a request to the app
+        echo "App is running successfully."
+
+    # Step 6: Stop and remove the container after the test
+    - name: Stop and remove Docker container
+      run: |
+        docker ps -q -f ancestor=$IMAGE_TAG | xargs docker stop  # Stop the running container
+        docker ps -a -q -f ancestor=$IMAGE_TAG | xargs docker rm  # Remove the stopped container

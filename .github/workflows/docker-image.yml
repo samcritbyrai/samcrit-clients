@@ -1,0 +1,39 @@
+name: Docker Image CI with Local Testing
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest  # Runs the job on an Ubuntu runner
+
+    steps:
+    # Step 1: Checkout the code from the repository
+    - uses: actions/checkout@v4
+
+    # Step 2: Build the Docker image from the Dockerfile
+    - name: Build Docker image
+      run: |
+        IMAGE_TAG="samcrit-client-app"  # Use a tag name for uniqueness
+        docker build . --file Dockerfile --tag $IMAGE_TAG
+
+    # Step 3: Run the Docker container from the locally built image
+    - name: Run Docker container locally
+      run: |
+        IMAGE_TAG="samcrit-client-app"
+        docker run -d -p 3000:3000 $IMAGE_TAG
+
+    # Step 4: Wait for the container to fully start (Adjust timing if necessary)
+    - name: Wait for the Docker container to be up
+      run: |
+        sleep 10  # Allow the app to start (adjust if necessary)
+
+    # Step 5: Deploy to Azure App Service
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: "sam-clients"  # The name of your Azure App Service
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # GitHub secret storing the publish profile

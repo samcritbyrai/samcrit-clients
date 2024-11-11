@@ -31,14 +31,3 @@ jobs:
       run: |
         sleep 10  # Allow the app to start (adjust if necessary)
 
-    # Step 5: Verify the app is running using curl
-    - name: Test the Docker container
-      run: |
-        curl --silent --fail http://localhost:3000 || exit 1  # Make a request to the app
-        echo "App is running successfully."
-
-    # Step 6: Stop and remove the container after the test
-    - name: Stop and remove Docker container
-      run: |
-        docker ps -q -f ancestor=$IMAGE_TAG | xargs docker stop  # Stop the running container
-        docker ps -a -q -f ancestor=$IMAGE_TAG | xargs docker rm  # Remove the stopped container

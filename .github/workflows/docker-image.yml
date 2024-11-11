@@ -17,13 +17,13 @@ jobs:
     # Step 2: Build the Docker image from the Dockerfile
     - name: Build Docker image
       run: |
-        IMAGE_TAG="samcrit-client-app:$(date +%s)"  # Use a timestamp tag for uniqueness
+        IMAGE_TAG="samcrit-client-app"  # Use a timestamp tag for uniqueness
         docker build . --file Dockerfile --tag $IMAGE_TAG
 
     # Step 3: Run the Docker container from the locally built image
     - name: Run Docker container locally
       run: |
-        IMAGE_TAG="samcrit-client-app:$(date +%s)"
+        IMAGE_TAG="samcrit-client-app"
         docker run -d -p 3000:3000 $IMAGE_TAG
 
     # Step 4: Wait for the container to fully start (Adjust timing if necessary)

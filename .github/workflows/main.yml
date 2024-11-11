@@ -1,47 +1,51 @@
-name: Node.js CI/CD Pipeline
+name: Node.js with Docker CI
 
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger on PRs to the main branch
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
     
     steps:
-      # Step 1: Checkout the repository code
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js (specify the version you want)
+      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use Node.js 18 (or any other version)
+          node-version: '16'
 
-      # Step 3: Install dependencies
+      # Cache npm dependencies to speed up the workflow
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Install dependencies
       - name: Install dependencies
-        run: npm install  # Run npm install to install your dependencies
+        run: npm install
 
-      # Step 4: Run tests (if you have tests set up)
+      # Run tests (make sure you have a test script in package.json)
       - name: Run tests
-        run: npm test  # If you have tests defined in your package.json
+        run: npm test
 
-      # Step 5: Build the application (if applicable)
-      - name: Build the application
-        run: npm run build  # If you have a build script
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t my-node-app .
 
-      # Step 6: Deploy the application (optional, depending on your deployment method)
-      - name: Deploy the application
-        run: |
-          echo "Deploying the application..."
-          # Example: Deploy to a server, AWS, or other service
-          # If deploying to a remote server via SSH:
-          # ssh -i ${{ secrets.SSH_PRIVATE_KEY }} user@your-server "deploy script"
+      # Run Docker container to verify it works
+      - name: Run Docker container
+        run: docker run -d -p 3000:3000 my-node-app
 
-          # Or deploy to cloud services such as AWS, Azure, or DigitalOcean
-          # Example for AWS (Elastic Beanstalk, S3, etc.), make sure to use secrets for credentials
+
